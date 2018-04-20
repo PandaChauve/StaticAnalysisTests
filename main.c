@@ -197,13 +197,13 @@ void playGame()
 
 int main()
 {
-  char* buff = malloc(sizeof(char)*3); //3 char => not null terminated ;)
+
   int continuePlaying = 1;
   do{
     playGame();
     while(1)
     {
-      memset(buff, 0, 3);
+      char buff[3] = {0};
       printf("play again ? yes/no \n");
       char c;
       for (int i = 0; i < 3; ++i)
@@ -226,9 +226,9 @@ int main()
       {
         break;
       }
+      printf("I don't understand %s \n", buff); //this should overflow for input > 2 ... it doesn't
     }
   }
   while(continuePlaying);
-  free(buff);
   return 0;
 }
