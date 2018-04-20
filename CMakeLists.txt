@@ -52,22 +52,31 @@ add_custom_target(
         COMMENT "running cppcheck"
 )
 
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
+
+set(CET_C_WARNINGS -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2
+        -Winit-self -Wlogical-op  -Wredundant-decls -Wshadow
+        -Wundef -Werror -Wpointer-arith  -Wunreachable-code -Wunused)
+
+add_definitions(${CET_C_WARNINGS})
+
+
 if(ENABLE_ASAN)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fuse-ld=gold")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-omit-frame-pointer")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=leak")
 endif()
 
 if(ENABLE_USAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fuse-ld=gold")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined")
 endif()
 
 if(ENABLE_TSAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fuse-ld=gold")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=thread")
 endif()
 
 

@@ -10,7 +10,9 @@ int currentPlayer = 1;
 
 void freeGameBoard()
 {
-  free(gameBoard);
+  for(int i = 0; i < 3; ++i)
+    free(gameBoard[i]);
+  free(gameBoard); //leak ;)
   gameBoard = NULL;
 }
 
@@ -24,7 +26,7 @@ void initGame()
   gameBoard = malloc(sizeof(char*)*3);
   for(int i = 0; i < 3 ; ++i)
   {
-    gameBoard[i] = malloc(sizeof(int) * 3);
+    gameBoard[i] = malloc(sizeof(char) * 3);//invalid malloc size
   }
 
   for(int i = 0; i < 3; ++i)
@@ -41,8 +43,8 @@ void initGame()
 int seededPosition(int i)
 {
   static int seed = 42;
-  seed = seed*13;
-  return ((i+1) * seed);
+  seed = (seed*13) % 32768;
+  return ((i+1) * seed); //OVERFLOW
 }
 
 void printBoard()
@@ -69,7 +71,7 @@ int isWon()
         && gameBoard[i][0] != ' ')
       return 1;
 
-    if (gameBoard[0][i] == gameBoard[0][i]
+    if (gameBoard[0][i] == gameBoard[1][i] //copy paste error should be 1 instead of 0
         && gameBoard[0][i] == gameBoard[2][i]
         && gameBoard[0][i] != ' ')
       return 1;
@@ -101,15 +103,14 @@ int findWinningPlay(char playerChar, int* x, int* y)
         gameBoard[i][j] = ' ';
         if(won)
         {
-          if(x == NULL || y == NULL)
-            return 0;
-          x = i;
-          y = j; //forgot pointer
+          *x = i;
+          *y = j; //forgot pointer
           return 1;
         }
       }
     }
   }
+  return 0; //forgot return 0
 }
 
 void play()
@@ -121,7 +122,7 @@ void play()
   {
     //check if it can win in one turn
     int x, y = 0;
-    int success = findWinningPlay(currentPlayer, &x, &y);
+    int success = findWinningPlay(player, &x, &y); //currentPlayer instead of player
     if (success)
     {
       gameBoard[x][y] = player;
@@ -147,7 +148,7 @@ void play()
     si = (si + 1) % 3;
     for (int j = 0; j < 3; ++j)
     {
-      sj = (si + 1) % 3;
+      sj = (sj + 1) % 3; //si instead of sj
       if (gameBoard[si][sj] == ' ')
       {
         gameBoard[si][sj] = player;
@@ -166,9 +167,9 @@ int canPlay()
 
   for(int i = 0; i < 3; ++i)
   {
-    for (int j = 0; j < 3; ++i)
+    for (int j = 0; j < 3; ++j) //invalid loop increment
     {
-      if(gameBoard[i][j] == ' ');
+      if(gameBoard[i][j] == ' ')//TRAILING ;
       {
         return 1;
       }
@@ -187,7 +188,7 @@ void playGame()
   }
 
   if(isWon())
-    printf("'%s' has won ! \n",  currentPlayer ? 'X' : 'O');
+    printf("'%c' has won ! \n",  currentPlayer ? 'X' : 'O'); //%s instead of %c
   else
     printf("Draw :(\n");
 
@@ -202,13 +203,13 @@ int main()
     playGame();
     while(1)
     {
-      char buff[3] = {0};
+      char buff[4] = {0};
       char message[22] = "play again ? yes/no\n";
       printf("%s", message);
       char c;
       for (int i = 0; i < 3; ++i)
       {
-        char c = (char) fgetc(stdin);
+        c = (char) fgetc(stdin); //redefine char c
         if (c == '\n')
           break;
         buff[i] = c;
@@ -226,7 +227,7 @@ int main()
       {
         break;
       }
-      printf("I don't understand %s \n", buff);
+      printf("I don't understand %s \n", buff); //overflow
     }
   }
   while(continuePlaying);
