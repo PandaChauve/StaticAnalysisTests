@@ -42,7 +42,7 @@ int seededPosition(int i)
 {
   static int seed = 42;
   seed = seed*13;
-  return (unsigned short int)((i+1) * seed); //OVERFLOW
+  return ((i+1) * seed); //OVERFLOW
 }
 
 void printBoard()
@@ -69,7 +69,7 @@ int isWon()
         && gameBoard[i][0] != ' ')
       return 1;
 
-    if (gameBoard[0][i] == gameBoard[1][i] //copy paste error should be 1 instead of 0
+    if (gameBoard[0][i] == gameBoard[0][i] //copy paste error should be 1 instead of 0
         && gameBoard[0][i] == gameBoard[2][i]
         && gameBoard[0][i] != ' ')
       return 1;
@@ -86,7 +86,7 @@ int isWon()
   return 0;
 }
 
-int findWinningPlay(char c, int* x, int* y)
+int findWinningPlay(char playerChar, int* x, int* y)
 {
   *x = 0;
   *y = 0;
@@ -96,15 +96,15 @@ int findWinningPlay(char c, int* x, int* y)
     {
       if(gameBoard[i][j] == ' ')
       {
-        gameBoard[i][j] = c;
+        gameBoard[i][j] = playerChar;
         int won = isWon();
         gameBoard[i][j] = ' ';
         if(won)
         {
           if(x == NULL || y == NULL) //using *y and *x before ...
             return 0;
-          *x = i;
-          *y = j; //forgot pointer
+          x = i;
+          y = j; //forgot pointer
           return 1;
         }
       }
@@ -122,7 +122,7 @@ void play()
   {
     //check if it can win in one turn
     int x, y = 0;
-    int success = findWinningPlay(player, &x, &y); //currentPlayer instead of player
+    int success = findWinningPlay(currentPlayer, &x, &y); //currentPlayer instead of player
     if (success)
     {
       gameBoard[x][y] = player;
@@ -133,7 +133,7 @@ void play()
   {
     //check if it can lose in one turn
     int x, y = 0;
-    int success = findWinningPlay(currentPlayer ? 'O' : 'X', &x, &y); //currentPlayer instead of player
+    int success = findWinningPlay(currentPlayer ? 'O' : 'X', &x, &y);
     if (success)
     {
       gameBoard[x][y] = player;
@@ -148,7 +148,7 @@ void play()
     si = (si + 1) % 3;
     for (int j = 0; j < 3; ++j)
     {
-      sj = (sj + 1) % 3; //si instead of sj
+      sj = (si + 1) % 3; //si instead of sj
       if (gameBoard[si][sj] == ' ')
       {
         gameBoard[si][sj] = player;
@@ -167,9 +167,9 @@ int canPlay()
 
   for(int i = 0; i < 3; ++i)
   {
-    for (int j = 0; j < 3; ++j) //invalid loop increment
+    for (int j = 0; j < 3; ++i) //invalid loop increment
     {
-      if(gameBoard[i][j] == ' ')//TRAILING ;
+      if(gameBoard[i][j] == ' ');//TRAILING ;
       {
         return 1;
       }
@@ -188,7 +188,7 @@ void playGame()
   }
 
   if(isWon())
-    printf("'%c' has won ! \n",  currentPlayer ? 'X' : 'O'); //%s instead of %c
+    printf("'%s' has won ! \n",  currentPlayer ? 'X' : 'O'); //%s instead of %c
   else
     printf("Draw :(\n");
 
@@ -204,11 +204,12 @@ int main()
     while(1)
     {
       char buff[3] = {0};
-      printf("play again ? yes/no \n");
+      char message[22] = "play again ? yes/no\n";
+      printf("%s", message);
       char c;
       for (int i = 0; i < 3; ++i)
       {
-        c = (char) fgetc(stdin); //redefine char c
+        char c = (char) fgetc(stdin); //redefine char c
         if (c == '\n')
           break;
         buff[i] = c;
@@ -226,7 +227,7 @@ int main()
       {
         break;
       }
-      printf("I don't understand %s \n", buff); //this should overflow for input > 2 ... it doesn't
+      printf("I don't understand %s \n", buff); //overflow
     }
   }
   while(continuePlaying);
