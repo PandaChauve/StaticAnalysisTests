@@ -223,7 +223,7 @@ int main()
         continuePlaying = 0;
         break;
       }
-      else if (strcmp(buff, "yes") == 0)
+      if (strcmp(buff, "yes") == 0)
       {
         break;
       }

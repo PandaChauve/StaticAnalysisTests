@@ -52,11 +52,9 @@ add_custom_target(
         COMMENT "running cppcheck"
 )
 
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
 
-set(CET_C_WARNINGS -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2
-        -Winit-self -Wlogical-op  -Wredundant-decls -Wshadow
-        -Wundef -Werror -Wpointer-arith  -Wunreachable-code -Wunused)
+#set(CET_C_WARNINGS -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op  -Wredundant-decls -Wshadow  -Wundef -Werror -Wpointer-arith  -Wunreachable-code -Wunused)
 
 add_definitions(${CET_C_WARNINGS})
 
@@ -80,4 +78,4 @@ if(ENABLE_TSAN)
 endif()
 
 
-add_executable(StaticAnalysisDemo main.c)
+add_executable(StaticAnalysisDemo main_fixed.c)
