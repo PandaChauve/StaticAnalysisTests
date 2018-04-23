@@ -104,7 +104,7 @@ int findWinningPlay(char playerChar, int* x, int* y)
           if(x == NULL || y == NULL)
             return 0;
           x = i;
-          y = j; //forgot pointer
+          y = j;
           return 1;
         }
       }
